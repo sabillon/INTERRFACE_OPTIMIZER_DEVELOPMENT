@@ -1,0 +1,11 @@
+/__pycache__/
+Interrface_INTERRFACE_OPTIMIZER_DEVELOPMENT/__pycache__/
+*38.pyc
+*39.pyc
+*.pyc
+__pycache__/app.cpython-39.pyc
+__pycache__/methods.cpython-39.pyc
+auxiliarfunctions/__pycache__/Ask_EM_function.cpython-39.pyc
+auxiliarfunctions/__pycache__/SearchSchedules.cpython-39.pyc
+MQTT/__pycache__/MQTTSendMessage.cpython-39.pyc
+
