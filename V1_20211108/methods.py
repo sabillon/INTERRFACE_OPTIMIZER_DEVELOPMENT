@@ -297,7 +297,6 @@ def optimization_ERMS(json_in):
     json_out = JSON_out(OPTResults, json_in)
     res = AMPL_res_DBs(json_out, OPTResults)
     
-    # datetime object containing current date and time
     now = datetime.now()
     dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
     f= open("guru99.txt","w+")
