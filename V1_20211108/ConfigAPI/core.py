@@ -16,9 +16,9 @@ app_settings = os.getenv(
 app.config.from_object(app_settings)
 
 DB = SQLAlchemy(app)
-DB.create_all()
+# DB.create_all()
 
-from methods import test_blueprint
+# from methods import test_blueprint
 #from ConfigAPI.JWT.JWTmethods import JWT_blueprint
-app.register_blueprint(test_blueprint)
+# app.register_blueprint(test_blueprint)
 #app.register_blueprint(JWT_blueprint)

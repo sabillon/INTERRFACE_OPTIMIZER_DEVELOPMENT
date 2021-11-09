@@ -11,8 +11,8 @@ from CollectionOfQueries import QS
 
 def test1():
     # table = DBS.classev_input_F
-    # table = DBS.classpv_input_F
-    table = DBS.classoutput_F
+    table = DBS.classpv_input_F
+    # table = DBS.classoutput_F
     # table = DBS.classnumberofst_output_F
     obj = QS.read(DB_F, table)
     return obj
@@ -49,22 +49,22 @@ def Dict():
     #     dict["P_Power_schedule"[i] = 1]
     return dict
 
-obj1 = test3()
-id_empty = []
-early_timestamp = datetime.now()
-for obj in obj1:    #for each result in previous query
-    last_opt = QS.read_filter(DB_F, DBS.classoptimization_container_events_F, DBS.classoptimization_container_events_F.FK_NumberofSet_Output == obj.id_NumberofSet_Output, ordered = DBS.classoptimization_container_events_F.timestamp.desc())   #get last optimization done for that NumbofSet 
-    if len(last_opt) == 0:
-        id_empty.append(obj.id_NumberofSet_Output)
-        print(id_empty)
-    else:
-        # print(last_opt[0].timestamp)
-        # time_last_opt = datetime.strptime(last_opt[0].timestamp, '%Y-%m-%d %H:%M:%S')
-        print(last_opt[0].timestamp)
-        if last_opt[0].timestamp < early_timestamp:    #if last optimization timestamp occurred before than early_timestamp variable
-            early_timestamp = last_opt[0].timestamp    #save last_opt timestamp in early_timestamp
-            id = obj.id_NumberofSet_Output          #save number of set value as it is the "oldest"
-to_optimize_json = {}
+obj1 = test1()
+# id_empty = []
+# early_timestamp = datetime.now()
+# for obj in obj1:    #for each result in previous query
+#     last_opt = QS.read_filter(DB_F, DBS.classoptimization_container_events_F, DBS.classoptimization_container_events_F.FK_NumberofSet_Output == obj.id_NumberofSet_Output, ordered = DBS.classoptimization_container_events_F.timestamp.desc())   #get last optimization done for that NumbofSet 
+#     if len(last_opt) == 0:
+#         id_empty.append(obj.id_NumberofSet_Output)
+#         print(id_empty)
+#     else:
+#         # print(last_opt[0].timestamp)
+#         # time_last_opt = datetime.strptime(last_opt[0].timestamp, '%Y-%m-%d %H:%M:%S')
+#         print(last_opt[0].timestamp)
+#         if last_opt[0].timestamp < early_timestamp:    #if last optimization timestamp occurred before than early_timestamp variable
+#             early_timestamp = last_opt[0].timestamp    #save last_opt timestamp in early_timestamp
+#             id = obj.id_NumberofSet_Output          #save number of set value as it is the "oldest"
+# to_optimize_json = {}
 
 
 # dict = Dict()
