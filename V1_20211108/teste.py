@@ -27,10 +27,12 @@ def test2(Dict):
     return obj
 
 def test3():
-    table=DBS.classoutput_F
-    crit=DBS.classoutput_F.FK_NumberOfSet_output <= 5
-    order = DBS.classoutput_F.timestamp.asc()
-    obj = QS.read_filter(DB_F,table, crit, ordered = order)
+    table=DBS.classnumberofst_output_F
+    crit=DBS.classnumberofst_output_F.TypeOfOutput == "ERMS"
+    # order = DBS.classnumberofst_output_F.timestamp.asc()
+    # obj = QS.read_filter(DB_F,table, crit, ordered = order)
+    # obj = QS.read_filter(DB_F,table, crit)
+    obj = QS.read_filter(DB_F,DBS.classnumberofst_output_F, DBS.classnumberofst_output_F.TypeOfOutput == "ERMS")
     return obj
 
 def Dict():
@@ -48,7 +50,32 @@ def Dict():
     return dict
 
 obj1 = test3()
+id_empty = []
+early_timestamp = datetime.now()
+for obj in obj1:    #for each result in previous query
+    last_opt = QS.read_filter(DB_F, DBS.classoptimization_container_events_F, DBS.classoptimization_container_events_F.FK_NumberofSet_Output == obj.id_NumberofSet_Output, ordered = DBS.classoptimization_container_events_F.timestamp.desc())   #get last optimization done for that NumbofSet 
+    if len(last_opt) == 0:
+        id_empty.append(obj.id_NumberofSet_Output)
+        print(id_empty)
+    else:
+        # print(last_opt[0].timestamp)
+        # time_last_opt = datetime.strptime(last_opt[0].timestamp, '%Y-%m-%d %H:%M:%S')
+        print(last_opt[0].timestamp)
+        if last_opt[0].timestamp < early_timestamp:    #if last optimization timestamp occurred before than early_timestamp variable
+            early_timestamp = last_opt[0].timestamp    #save last_opt timestamp in early_timestamp
+            id = obj.id_NumberofSet_Output          #save number of set value as it is the "oldest"
+to_optimize_json = {}
 
+
+# dict = Dict()
+# a = test2(dict)
+
+# early_timestamp = datetime.now()
+# print (early_timestamp)
+
+# time_last_opt = datetime.strptime(last_opt[0].timestamp, '%Y-%m-%d %H:%M:%S')
+
+"""
 tsp = []
 a1 = []
 a2 = []
@@ -94,7 +121,4 @@ for i in range(len(obj1)):
     f.write("%s\t\t" % (Nst[i]))
     f.write("\n")
 f.close()
-
-# dict = Dict()
-# a = test2(dict)
-
+"""
