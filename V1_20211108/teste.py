@@ -15,6 +15,7 @@ def test1():
     # table = DBS.classoutput_F
     # table = DBS.classnumberofst_output_F
     obj = QS.read(DB_F, table)
+    # obj=table.query.all()
     return obj
 
 def test2(Dict):
@@ -27,12 +28,10 @@ def test2(Dict):
     return obj
 
 def test3():
-    table=DBS.classnumberofst_output_F
-    crit=DBS.classnumberofst_output_F.TypeOfOutput == "ERMS"
-    # order = DBS.classnumberofst_output_F.timestamp.asc()
-    # obj = QS.read_filter(DB_F,table, crit, ordered = order)
-    # obj = QS.read_filter(DB_F,table, crit)
-    obj = QS.read_filter(DB_F,DBS.classnumberofst_output_F, DBS.classnumberofst_output_F.TypeOfOutput == "ERMS")
+    table = DBS.classpv_input_F
+    crit = DBS.classpv_input_F.FK_NumberOfSet_PV == 1
+    order = DBS.classpv_input_F.timestamp.asc()
+    obj = QS.read_filter(DB_F,table, crit, ordered = order)    
     return obj
 
 def Dict():
@@ -49,7 +48,8 @@ def Dict():
     #     dict["P_Power_schedule"[i] = 1]
     return dict
 
-obj1 = test1()
+obj1 = test3()
+# print(obj1)
 # id_empty = []
 # early_timestamp = datetime.now()
 # for obj in obj1:    #for each result in previous query
@@ -75,32 +75,33 @@ obj1 = test1()
 
 # time_last_opt = datetime.strptime(last_opt[0].timestamp, '%Y-%m-%d %H:%M:%S')
 
-"""
-tsp = []
+
+# tsp = []
 a1 = []
-a2 = []
-a3 = []
-a4 = []
-a5 = []
-a6 = []
-a7 = []
-a8 = []
-a9 = []
-a10 = []
-Nst = []
+# a2 = []
+# a3 = []
+# a4 = []
+# a5 = []
+# a6 = []
+# a7 = []
+# a8 = []
+# a9 = []
+# a10 = []
+# Nst = []
 for object in obj1:
-    tsp.append([object.timestamp])  
-    a1.append([object.P_Power_schedule])  
-    a2.append([object.Q_Power_schedule])
-    a3.append([object.P_reserve_up])
-    a4.append([object.P_reserve_down])
-    a5.append([object.Q_reserve_up])
-    a6.append([object.Q_reserve_down])
-    a7.append([object.P_Bid_price_up])
-    a8.append([object.P_Bid_price_down])
-    a9.append([object.Q_Bid_price_up])
-    a10.append([object.Q_Bid_price_down])
-    Nst.append([object.FK_NumberOfSet_output])
+    # tsp.append([object.timestamp])  
+    a1.append([object.forecast])  
+    # a1.append([object.P_Power_schedule])  
+    # a2.append([object.Q_Power_schedule])
+    # a3.append([object.P_reserve_up])
+    # a4.append([object.P_reserve_down])
+    # a5.append([object.Q_reserve_up])
+    # a6.append([object.Q_reserve_down])
+    # a7.append([object.P_Bid_price_up])
+    # a8.append([object.P_Bid_price_down])
+    # a9.append([object.Q_Bid_price_up])
+    # a10.append([object.Q_Bid_price_down])
+    # Nst.append([object.FK_NumberOfSet_output])
 
 f= open("guru99.txt","w+")
 f.write("Number of items \t%d\n\n" % (len(obj1)))
@@ -109,16 +110,15 @@ f.write("i\t\t a1\t\t\t a2\t\t\t a3\t\t\t a4\t\t\t \
 for i in range(len(obj1)):
     f.write("%d\t\t" % (i))
     f.write("%s\t\t" % (a1[i]))
-    f.write("%s\t\t" % (a2[i]))
-    f.write("%s\t\t" % (a3[i]))
-    f.write("%s\t\t" % (a4[i]))
-    f.write("%s\t\t" % (a5[i]))
-    f.write("%s\t\t" % (a6[i]))
-    f.write("%s\t\t" % (a7[i]))
-    f.write("%s\t\t" % (a8[i]))
-    f.write("%s\t\t" % (a9[i]))
-    f.write("%s\t\t" % (a10[i]))
-    f.write("%s\t\t" % (Nst[i]))
+    # f.write("%s\t\t" % (a2[i]))
+    # f.write("%s\t\t" % (a3[i]))
+    # f.write("%s\t\t" % (a4[i]))
+    # f.write("%s\t\t" % (a5[i]))
+    # f.write("%s\t\t" % (a6[i]))
+    # f.write("%s\t\t" % (a7[i]))
+    # f.write("%s\t\t" % (a8[i]))
+    # f.write("%s\t\t" % (a9[i]))
+    # f.write("%s\t\t" % (a10[i]))
+    # f.write("%s\t\t" % (Nst[i]))
     f.write("\n")
 f.close()
-"""
