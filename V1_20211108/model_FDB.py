@@ -189,7 +189,7 @@ class classnumberofst_acepted_F(DB.Model):
     id_NumberofSet_Acepted = DB.Column(DB.Integer, primary_key=True, autoincrement = True)
     FK_NumberofSet_Output = DB.Column(DB.Integer,DB.ForeignKey('numberofst_output.id_NumberofSet_Output'))
     TypeOfOutput = DB.Column(DB.Enum(TypeOfOutput))
-    output_accepted=DB.relationship('classoutput_accepted_F',backref='numberofset')
+    output_accepted=DB.relationship('classoutput_accepted_F',backref='numberofset',cascade="all, delete")
 
    
     def __init__(self, **kwargs):
@@ -222,12 +222,21 @@ class classnumberofst_lec_F(DB.Model):
     def __init__(self, **kwargs):
         super(classnumberofst_lec_F, self).__init__(**kwargs)
 
+class classRel_Opt_NumberOfSetOutput(DB.Model):
+    __bind_key__ = NameDataBase
+    __tablename__ = 'Rel_Opt_NumberOfSetOutput'
+    FK_NumberofSet_Output=DB.Column(DB.Integer,DB.ForeignKey('numberofst_output.id_NumberofSet_Output'),primary_key=True)
+    FK_optimization_container=DB.Column(DB.Integer,DB.ForeignKey('optimization_container_events.id_OPT'),primary_key=True)
 
+
+    def __init__(self, **kwargs):
+        super(classRel_Opt_NumberOfSetOutput, self).__init__(**kwargs)   
 
 class classnumberofst_output_F(DB.Model):
     __bind_key__ = NameDataBase
     __tablename__ = 'numberofst_output'
     id_NumberofSet_Output = DB.Column(DB.Integer, primary_key=True, autoincrement = True)
+    timestamp = DB.Column(DB.DateTime, nullable=False, default=datetime.utcnow())
 
     NumberofSet_ERMS = DB.Column(DB.Integer)
     NumberofSet_AFrr = DB.Column(DB.Integer)
@@ -241,25 +250,26 @@ class classnumberofst_output_F(DB.Model):
     FK_NumberOfSet_Lec = DB.Column(DB.Integer, DB.ForeignKey('numberofst_lec.id_NumberofSet_LEC'))
     TypeOfOutput = DB.Column(DB.Enum(TypeOfOutput))
     
-    optimization_container_events= DB.relationship('classoptimization_container_events_F',backref='numberofstOutput')
-    numberofst_acepted=DB.relationship('classnumberofst_acepted_F', backref='numberofset')
-    output=DB.relationship('classoutput_F',backref='numberofset')
+    #optimization_container_events= DB.relationship('classoptimization_container_events_F',backref='numberofstOutput')
+    numberofst_acepted=DB.relationship('classnumberofst_acepted_F', backref='numberofset',cascade="all, delete")
+    output=DB.relationship('classoutput_F',backref='numberofset',cascade="all, delete")
     
    
     def __init__(self, **kwargs):
         super(classnumberofst_output_F, self).__init__(**kwargs)
     
-   
+
 
 class classoptimization_container_events_F(DB.Model):
     __bind_key__ = NameDataBase
     __tablename__ = 'optimization_container_events'
     id_OPT = DB.Column(DB.Integer, primary_key=True, autoincrement = True)
-    timestamp = DB.Column(DB.DATETIME, nullable=False, default=datetime.utcnow())
+    timestamp = DB.Column(DB.DateTime, nullable=False, default=datetime.now())
     convergence = DB.Column(DB.Integer, nullable=False)
     solution_time = DB.Column(DB.Float, nullable=False)
     objective_function = DB.Column(DB.Float, nullable=False)
-    FK_NumberofSet_Output = DB.Column(DB.Integer,DB.ForeignKey('numberofst_output.id_NumberofSet_Output'), nullable=False)
+    number_of_set_output=DB.relationship('classnumberofst_output_F',secondary='Rel_Opt_NumberOfSetOutput',backref='optimizations',cascade="all, delete")
+    #FK_NumberofSet_Output = DB.Column(DB.Integer,DB.ForeignKey('numberofst_output.id_NumberofSet_Output'), nullable=False)
    
     def __init__(self, **kwargs):
          super(classoptimization_container_events_F, self).__init__(**kwargs)
@@ -270,18 +280,18 @@ class classoutput_F(DB.Model):
     __bind_key__ = NameDataBase
     __tablename__ = 'output'
     id_output = DB.Column(DB.Integer, primary_key=True, autoincrement = True)
-    timestamp = DB.Column(DB.DATETIME, nullable=False)
-    P_reserve_up = DB.Column(DB.FLOAT, nullable=False)
-    P_reserve_down = DB.Column(DB.FLOAT, nullable=False)
-    Q_reserve_up = DB.Column(DB.FLOAT, nullable=False)
-    Q_reserve_down = DB.Column(DB.FLOAT, nullable=False)
-    P_Bid_price_up = DB.Column(DB.FLOAT, nullable=False)
-    P_Bid_price_down = DB.Column(DB.FLOAT, nullable=False)
-    Q_Bid_price_up = DB.Column(DB.FLOAT, nullable=False)
-    Q_Bid_price_down = DB.Column(DB.FLOAT, nullable=False)
-    P_Power_schedule = DB.Column(DB.FLOAT, nullable=False)
-    Q_Power_schedule = DB.Column(DB.FLOAT, nullable=False)
-    FK_NumberOfSet_output=DB.Column(DB.Integer,DB.ForeignKey('numberofst_output.id_NumberofSet_Output'),nullable=False)
+    timestamp = DB.Column(DB.DateTime, nullable=False, default=datetime.utcnow())
+    P_reserve_up = DB.Column(DB.FLOAT)
+    P_reserve_down = DB.Column(DB.FLOAT)
+    Q_reserve_up = DB.Column(DB.FLOAT)
+    Q_reserve_down = DB.Column(DB.FLOAT)
+    P_Bid_price_up = DB.Column(DB.FLOAT)
+    P_Bid_price_down = DB.Column(DB.FLOAT)
+    Q_Bid_price_up = DB.Column(DB.FLOAT)
+    Q_Bid_price_down = DB.Column(DB.FLOAT)
+    P_Power_schedule = DB.Column(DB.FLOAT)
+    Q_Power_schedule = DB.Column(DB.FLOAT)
+    FK_NumberOfSet_output=DB.Column(DB.Integer,DB.ForeignKey('numberofst_output.id_NumberofSet_Output'))
    
     def __init__(self, **kwargs):
         super(classoutput_F, self).__init__(**kwargs)
