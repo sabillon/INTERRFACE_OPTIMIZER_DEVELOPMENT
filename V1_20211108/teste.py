@@ -11,7 +11,8 @@ from CollectionOfQueries import QS
 
 def test1():
     # table = DBS.classev_input_F
-    table = DBS.classpv_input_F
+    # table = DBS.classpv_input_F
+    table = DBS.classbess_parameter_input_F
     # table = DBS.classoutput_F
     # table = DBS.classnumberofst_output_F
     obj = QS.read(DB_F, table)
@@ -55,9 +56,9 @@ def test_w1_dem(Dict,NoS):
     return obj
 
 def test3():
-    table = DBS.classpv_input_F
-    crit = DBS.classpv_input_F.FK_NumberOfSet_PV == 1
-    order = DBS.classpv_input_F.timestamp.asc()
+    table = DBS.classoutput_F
+    crit = DBS.classoutput_F.FK_NumberOfSet_output == 11
+    order = DBS.classoutput_F.timestamp.asc()
     obj = QS.read_filter(DB_F,table, crit, ordered = order)    
     return obj
 
@@ -144,10 +145,10 @@ DictOutput_ac = {
     "Final_Price_Q_Reserve_down" : [0]*72
     }
 
-# obj2 = test_w1_output(DictOutput,3)
+# obj2 = test_w1_output(DictOutput,11)
 # obj2 = test_w1_input(DictERMS,2)
-# obj2 = test_w1_outputac(DictOutput_ac)
-obj2 = test_w1_pv(DictPV,4)
+obj2 = test_w1_outputac(DictOutput_ac,2)
+# obj2 = test_w1_pv(DictPV,4)
 # obj2 = test_w1_dem(DictDem,2)
 # obj2 = test_w1_ev(DictEV,2)
 
@@ -159,28 +160,12 @@ newopt={
 # print("\nConv = %d"%OPTResults.opt_conv)   
 # print("\nTime = %s"%OPTResults.opt_time)   
 # print("\nOF = %s"%OPTResults.OFval)   
-optresult=QS.write(DB_F,DBS.classoptimization_container_events_F,newopt)
+# optresult=QS.write(DB_F,DBS.classoptimization_container_events_F,newopt)
 
 
+# obj_bess = test1()
 # obj1 = test1()
 # obj1 = test3()
-
-# print(obj1)
-# id_empty = []
-# early_timestamp = datetime.now()
-# for obj in obj1:    #for each result in previous query
-#     last_opt = QS.read_filter(DB_F, DBS.classoptimization_container_events_F, DBS.classoptimization_container_events_F.FK_NumberofSet_Output == obj.id_NumberofSet_Output, ordered = DBS.classoptimization_container_events_F.timestamp.desc())   #get last optimization done for that NumbofSet 
-#     if len(last_opt) == 0:
-#         id_empty.append(obj.id_NumberofSet_Output)
-#         print(id_empty)
-#     else:
-#         # print(last_opt[0].timestamp)
-#         # time_last_opt = datetime.strptime(last_opt[0].timestamp, '%Y-%m-%d %H:%M:%S')
-#         print(last_opt[0].timestamp)
-#         if last_opt[0].timestamp < early_timestamp:    #if last optimization timestamp occurred before than early_timestamp variable
-#             early_timestamp = last_opt[0].timestamp    #save last_opt timestamp in early_timestamp
-#             id = obj.id_NumberofSet_Output          #save number of set value as it is the "oldest"
-# to_optimize_json = {}
 
 
 # dict = Dict()
@@ -191,50 +176,80 @@ optresult=QS.write(DB_F,DBS.classoptimization_container_events_F,newopt)
 
 # time_last_opt = datetime.strptime(last_opt[0].timestamp, '%Y-%m-%d %H:%M:%S')
 
+
+
+    # kadn = 0.0101439
+    # katn = 0.0002295
+    # ktmv = 0.004998
+    # kttn = 0.005253
+    # kqga = 0.058344
+    # kqua = 0.0058344
+
+if 'obj_bess' in locals(): 
+    for object in obj_bess:
+        psm = object.Power_limit
+        nin = object.injection_eff
+        nab = object.absortion_eff
+        nsd = object.self_discharge
+        ein = object.initial_energy
+        elu = object.energy_upper_limit
+        ell = object.energy_lower_limit
+    f = open("guru99.txt","w+")
+    f.write("Number of items \t%d\n"     % (len(obj_bess)))
+    f.write("Power_limit         \t%.3f\n" % (psm))
+    f.write("injection_eff       \t%.3f\n" % (nin))
+    f.write("absortion_eff       \t%.3f\n" % (nab))
+    f.write("self_discharge      \t%.3f\n" % (nsd))
+    f.write("initial_energy      \t%.3f\n" % (ein))
+    f.write("energy_upper_limit  \t%.3f\n" % (elu))
+    f.write("energy_lower_limit  \t%.3f\n" % (ell))
+    f.write("\n")
+    f.close()
+
 if 'obj1' in locals(): 
-    # tsp = []
+    tsp = []
     a1 = []
-    # a2 = []
-    # a3 = []
-    # a4 = []
-    # a5 = []
-    # a6 = []
-    # a7 = []
-    # a8 = []
-    # a9 = []
-    # a10 = []
-    # Nst = []
+    a2 = []
+    a3 = []
+    a4 = []
+    a5 = []
+    a6 = []
+    a7 = []
+    a8 = []
+    a9 = []
+    a10 = []
+    Nst = []
     for object in obj1:
-        # tsp.append([object.timestamp])  
-        a1.append([object.forecast])  
-        # a1.append([object.P_Power_schedule])  
-        # a2.append([object.Q_Power_schedule])
-        # a3.append([object.P_reserve_up])
-        # a4.append([object.P_reserve_down])
-        # a5.append([object.Q_reserve_up])
-        # a6.append([object.Q_reserve_down])
-        # a7.append([object.P_Bid_price_up])
-        # a8.append([object.P_Bid_price_down])
-        # a9.append([object.Q_Bid_price_up])
-        # a10.append([object.Q_Bid_price_down])
-        # Nst.append([object.FK_NumberOfSet_output])
+        tsp.append([object.timestamp])  
+        # a1.append([object.forecast])  
+        a1.append([object.P_Power_schedule])  
+        a2.append([object.Q_Power_schedule])
+        a3.append([object.P_reserve_up])
+        a4.append([object.P_reserve_down])
+        a5.append([object.Q_reserve_up])
+        a6.append([object.Q_reserve_down])
+        a7.append([object.P_Bid_price_up])
+        a8.append([object.P_Bid_price_down])
+        a9.append([object.Q_Bid_price_up])
+        a10.append([object.Q_Bid_price_down])
+        Nst.append([object.FK_NumberOfSet_output])
 
     f= open("guru99.txt","w+")
     f.write("Number of items \t%d\n\n" % (len(obj1)))
-    f.write("i\t\t a1\t\t\t a2\t\t\t a3\t\t\t a4\t\t\t \
+    f.write("i\t\t a1\t\t\t a2\t\t\t a3\t\t\t a4\t\t \
         a5\t\t\t a6\t\t\t a7\t\t\t a8\t\t\t a9\t\t\t a10\t\t\t Nst\n")
     for i in range(len(obj1)):
         f.write("%d\t\t" % (i))
         f.write("%s\t\t" % (a1[i]))
-        # f.write("%s\t\t" % (a2[i]))
-        # f.write("%s\t\t" % (a3[i]))
-        # f.write("%s\t\t" % (a4[i]))
-        # f.write("%s\t\t" % (a5[i]))
-        # f.write("%s\t\t" % (a6[i]))
-        # f.write("%s\t\t" % (a7[i]))
-        # f.write("%s\t\t" % (a8[i]))
-        # f.write("%s\t\t" % (a9[i]))
-        # f.write("%s\t\t" % (a10[i]))
-        # f.write("%s\t\t" % (Nst[i]))
+        f.write("%s\t\t" % (a2[i]))
+        f.write("%s\t\t" % (a3[i]))
+        f.write("%s\t\t" % (a4[i]))
+        f.write("%s\t\t" % (a5[i]))
+        f.write("%s\t\t" % (a6[i]))
+        f.write("%s\t\t" % (a7[i]))
+        f.write("%s\t\t" % (a8[i]))
+        f.write("%s\t\t" % (a9[i]))
+        f.write("%s\t\t" % (a10[i]))
+        f.write("%s\t\t" % (Nst[i]))
         f.write("\n")
     f.close()
