@@ -5,6 +5,7 @@ Created on Tue Jul 27 17:43:30 2021
 @author: baltas
 modificated: Juan Benitez
 """
+from flask_sqlalchemy import BaseQuery
 import numpy as np
 import datetime
 from sqlalchemy import and_
@@ -26,12 +27,22 @@ class QS:
 
         Parameters
         ----------
+        db : flask_sqlalchemy.SQLAlchemy
+            Configuration of a DB in SQLAlchemy
         table : flask_sqlalchemy.model.DefaultMeta
             The table of a database.
         criterion : TYPE
             The criterion for filtering the entries in the table.
         ordered : TYPE, optional
             Return the entires ordered according the definition in the variable.
+        
+        EXAMPLE:
+        --------
+        db = DB_F
+        table = classmeter_RT
+        criterion = and_(classmeter_RT.timestamp>=time1,classmeter_RT.timestamp>=time2)
+        ordered = classmeter_RT.timestamp.desc() or None
+
 
         Returns
         -------
@@ -40,12 +51,12 @@ class QS:
 
         """
         try:
-        # Get NumberOfSet_XX attribute for table
-        # NOS = [i for i in table.__dict__.keys() if 'NumberOfSet' in i][0]
+        
             if ordered is not None:    
                 objs= table.query.filter(criterion).order_by(ordered).all()
             
-            objs = table.query.filter(criterion).all()
+            else:
+                objs = table.query.filter(criterion).all()
 
         
             return objs
@@ -55,14 +66,32 @@ class QS:
             return e.args
     
     @staticmethod
-    def read(db,table):
+    def read(db,table,all=True,ordered=None):
         """
-        Read all Table
+        Read all Table or first row of table
 
         Parameters
         ----------
+
+        db : flask_sqlalchemy.SQLAlchemy
+            Configuration of a DB in SQLAlchemy
+
         table : flask_sqlalchemy.model.DefaultMeta
             The table of a database.
+
+        all: if is true return all values entries   else if is False return the first value entrie, 
+             default is True
+
+        ordered : TYPE, optional
+            Return the entires ordered according the definition in the variable.
+
+        EXAMPLE:
+        --------
+        db = DB_F
+        table = classmeter_RT
+        all = False
+        ordered = classmeter_RT.timestamp.desc() or None
+
 
         Returns
         -------
@@ -72,7 +101,19 @@ class QS:
         """
 
         try:
-            objs = table.query.all()
+            if ordered is not None:
+                if all == True:
+                    objs = table.query.order_by(ordered).all()
+                else:
+                    objs = table.query.order_by(ordered).first()
+
+            else:
+                if all == True:
+                    objs = table.query.all()
+                else:
+                    objs = table.query.first()
+            
+
 
             return objs
 
@@ -100,6 +141,16 @@ class QS:
             The dictionary containing the attributes of the table (as keys) and
             the values for these attributes.
             Warning: the values of the dictionary must be a array.
+
+        EXAMPLE:
+        --------
+        db = DB_RT
+        table = classmeter_RT
+        dictionary = {
+            "key1":[val1]
+            "key2":[val1]
+            "key3":[val1]
+        }
 
         Returns
         -------
@@ -214,7 +265,15 @@ class QS:
             return False
 
     @staticmethod    
-    def concat(inputs, join_key='-'):
+    def concat(inputs, join_key):
+        '''
+        concatenate the values inside the array, separates for join_key
+
+        EXAMPLE:
+        --------
+        inputs= [5,6,8,5,56]
+        join_key=','
+        '''
         if isinstance(inputs, list):
             x = [str(i) for i in inputs]
             return join_key.join(x)
@@ -236,10 +295,23 @@ class QS:
         Dictionary : dict
             The dictionary containing the attributes of the table (as keys) and
             the values for these attributes.
+            warning:the values must be in an array
         criterion : TYPE
             The criterion for finding the rows to update in the table.
         ordered : TYPE, optional
             Order To find the rows in the database that have to be the same as they are in the Dictionary.
+        
+        EXAMPLE:
+        --------
+        db = DB_F
+        table = classmeter_RT
+        dictionary = {
+            "key1":[val1]
+            "key2":[val1]
+            "key3":[val1]
+        }
+        ordered = classmeter_RT.timestamp.desc() or None
+     
         Returns
         -------
         TYPE
@@ -266,7 +338,7 @@ class QS:
     
 
     @staticmethod
-    def read_relationTable(db,table,criteria,SecondTable):
+    def read_relationTable(db,table,criteria,SecondTable,ordered=None):
         """"
         This method get the value of the relation table according to the criterion searched in the other table 
 
@@ -284,19 +356,24 @@ class QS:
         SecondTable: flask_sqlalchemy.model.DefaultMeta
             The relation table  with the other table of a database.
 
+        ordered : TYPE, optional
+            Return the entires ordered according the definition in the variable.
+
         Returns
         -------
         Return list the object from the relation table or None if the search criteria is not found 
         """""""""""
-
-        objs=QS.read_filter(db,table,criteria)
         
+        objs=QS.read_filter(db,table,criteria,ordered)
+      
         if objs != None:
             try:
                 SecObjs=[]
                 for obj in objs:
                     q=SecondTable.query.with_parent(obj)
-                    SecObjs.append(q)
+                    listQuery=list(q)
+                    if len(listQuery) != 0:
+                        SecObjs.append(q[0])
                 
                 return SecObjs
 
@@ -309,7 +386,42 @@ class QS:
         else:
             return None
         
-    
+    @staticmethod
+    def write_relationTable(db,secondTable_obj,backref):
+        """"
+        This method relates the ids of the tables in its relation table
+
+        Parameters
+        ----------
+        db : flask_sqlalchemy.SQLAlchemy
+            Configuration of a DB in SQLAlchemy
+
+        SecondTable_obj: object result of the query  
+
+        backref: attribute of the parent class that relates it to the child table 
+
+        Example
+        -------
+        db = DB_F
+        secondTable_obj = model_FDB.classoptimization_container_events_F(convergence=1,solution_time=10.3,objective_function=1.75)
+        backref = objResult_numberofsetOutput.optimizations
+
+        Returns
+        -------
+        Return None if the execution is sucessful or exception if have happened any error
+        """""""""""
+
+        try:
+            db.session.add(secondTable_obj)
+            result = backref.append(secondTable_obj)
+            db.session.commit()
+
+        except Exception as e:
+            db.session.rollback()
+            return e.args
+
+        return result
+
     @staticmethod
     def delete_filter(db,table,criteria,ordered=None):
         """"
@@ -539,10 +651,14 @@ class QS:
         """""""""""
 
         #Conseguimos el objeto datetime de hoy a las 0:00 y un time delta de mañana
-        now = datetime.datetime.now()
-        today = datetime.datetime(year= now.year,month= now.month,day= now.day)
-        deltatime_1_day = datetime.timedelta(days=1)
-        nextday = today + deltatime_1_day
+        now = datetime.datetime.now() # fecha y hora  de hoy
+        today = datetime.datetime(year= now.year,month= now.month,day= now.day)     # fecha de hoy
+        deltatime_1_day = datetime.timedelta(days=1) # cantidad de  dias= 1
+        deltatime_1_day = datetime.timedelta(days=3) # cantidad de  dias= 1
+        nextday = today + deltatime_1_day # fecha del dia siguiente a hoy
+        day3=today+deltatime_1_day*3        # antepasado mañana
+        deltahour= datetime.timedelta(hours=1) # 1 hora
+
        
         #buscamos en la base de datos output las filas con el tiempo de ayer y anteayer con el servicio que buscamos, ordenado por timestamp. Esto nos devolvera una lista de objetos donde los atributos de estos objetos seran el valor de cada fila.
 
@@ -673,7 +789,13 @@ class QS:
                             
 
         try: 
-            db_past.session.commit() # cerramos sesion y enviamos todo.
+            # cerramos sesion de DB past y enviamos todo.
+            db_past.session.commit() 
+            # # actualizamos la fecha de las filas obtenidas a 3 dias despues
+            # for i,obj in enumerate(objs):
+            #     obj.timestamp=day3+datetime.timedelta(hours=i)
+            # db_F.session.commit()
+
             return True,objs
         except Exception as e:
             db_past.session.rollback()

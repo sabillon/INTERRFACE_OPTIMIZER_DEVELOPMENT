@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, timedelta
 from ConfigAPI.core import app
 from flask import Flask
 from sqlalchemy import and_,func,desc
@@ -55,9 +55,9 @@ def test_w1_dem(Dict,NoS):
     obj = QS.update_multiple_row(DB_F, table, Dict, crit)
     return obj
 
-def test3():
+def test3(NoS):
     table = DBS.classoutput_F
-    crit = DBS.classoutput_F.FK_NumberOfSet_output == 11
+    crit = DBS.classoutput_F.FK_NumberOfSet_output == NoS
     order = DBS.classoutput_F.timestamp.asc()
     obj = QS.read_filter(DB_F,table, crit, ordered = order)    
     return obj
@@ -83,12 +83,13 @@ DictEV = {
     }
 
 DictPV = {
-    "forecast":[0]*8+[20]*8+[0]*8+[0]*8+[20]*8+[0]*8+[0]*8+[20]*8+[0]*8
+    # "forecast":[0]*8+[20]*8+[0]*8+[0]*8+[20]*8+[0]*8+[0]*8+[20]*8+[0]*8
+    "forecast":[0, 0, 0, 0, 0, 10, 12, 18, 24, 30, 34, 36.8, 40, 40, 38, 36, 30, 24, 8, 4, 0, 0, 0, 0]*3
     # "forecast":[0]*72
     }
 
 DictDem = {
-    "forecast_P":[50]*8+[100]*8+[40]*8+[50]*8+[100]*8+[40]*8+[50]*8+[100]*8+[40]*8,
+    "forecast_P":[28, 35, 42, 49, 63, 105, 119, 112, 119, 120.4, 133, 140, 140, 131.6, 126, 112, 86.8, 77, 63, 56, 44.8, 35, 30.8, 28]*3,
     "forecast_Q":[0]*72
     }
 
@@ -101,9 +102,9 @@ DictERMS = {
     "Requirement_P_reserve_down"    : [0]*72,
     "Requirement_Q_reserve_up"      : [0]*72,
     "Requirement_Q_reserve_down"    : [0]*72,
-    "Max_limit"                     : [0]*72,
+    "Max_limit"                     : [100]*72,
     "Min_limit"                     : [0]*72,
-    "P_forecast_price"              : [0.04]*8+[0.05]*8+[0.03]*8+[0.04]*8+[0.05]*8+[0.03]*8+[0.04]*8+[0.05]*8+[0.03]*8,
+    "P_forecast_price"              : [1.9748, 1.2046, 1.2045, 1.2046, 1.9043, 2.0906, 2.524, 3.30, 3.4498, 3.3002, 3.133, 3.00, 2.9472, 3.00, 3.28, 3.4218,3.5092,3.85,3.6213,3.4502,3.0333,2.6268,2.2594,2.0612]*3,
     # "P_forecast_price"              : [0]*72,
     "Q_forecast_price"              : [0]*72
     }
@@ -145,11 +146,11 @@ DictOutput_ac = {
     "Final_Price_Q_Reserve_down" : [0]*72
     }
 
-# obj2 = test_w1_output(DictOutput,11)
-# obj2 = test_w1_input(DictERMS,2)
-obj2 = test_w1_outputac(DictOutput_ac,2)
-# obj2 = test_w1_pv(DictPV,4)
-# obj2 = test_w1_dem(DictDem,2)
+# obj2 = test_w1_output(DictOutput,10)
+# obj2 = test_w1_input(DictERMS,1)
+# obj2 = test_w1_outputac(DictOutput_ac,2)
+# obj2 = test_w1_pv(DictPV,1)
+# obj2 = test_w1_dem(DictDem,1)
 # obj2 = test_w1_ev(DictEV,2)
 
 newopt={
@@ -165,14 +166,20 @@ newopt={
 
 # obj_bess = test1()
 # obj1 = test1()
-# obj1 = test3()
+obj1 = test3(10)
 
 
 # dict = Dict()
 # a = test2(dict)
 
-# early_timestamp = datetime.now()
-# print (early_timestamp)
+# def trying():
+#     a = {"Hola2":"Hola","Hola3":"Hola"}
+#     return a
+# json1 = {}
+# # json2 = {"Hola2":"Hola","Hola3":"Hola"}
+# json1.update(trying())
+# print(json1)
+
 
 # time_last_opt = datetime.strptime(last_opt[0].timestamp, '%Y-%m-%d %H:%M:%S')
 
