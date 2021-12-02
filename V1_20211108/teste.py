@@ -55,10 +55,17 @@ def test_w1_dem(Dict,NoS):
     obj = QS.update_multiple_row(DB_F, table, Dict, crit)
     return obj
 
-def test3(NoS):
+def test_r1_output(NoS):
     table = DBS.classoutput_F
     crit = DBS.classoutput_F.FK_NumberOfSet_output == NoS
     order = DBS.classoutput_F.timestamp.asc()
+    obj = QS.read_filter(DB_F,table, crit, ordered = order)    
+    return obj
+
+def test_r1_input(NoS):
+    table = DBS.classtypeofinputt_F
+    crit = DBS.classtypeofinputt_F.FK_NumberOfSet_input == NoS
+    order = DBS.classtypeofinputt_F.timestamp.asc()
     obj = QS.read_filter(DB_F,table, crit, ordered = order)    
     return obj
 
@@ -166,7 +173,8 @@ newopt={
 
 # obj_bess = test1()
 # obj1 = test1()
-obj1 = test3(10)
+obj_o = test_r1_output(10)
+obj_i = test_r1_input(1)
 
 
 # dict = Dict()
@@ -179,18 +187,13 @@ obj1 = test3(10)
 # # json2 = {"Hola2":"Hola","Hola3":"Hola"}
 # json1.update(trying())
 # print(json1)
-
-
+FMT = '%Y-%m-%d-%H:%M'
+# init_t = datetime.now()
+# init_t2 = datetime.strftime(init_t, FMT)
+# print(init_t)
+# print(init_t2)
 # time_last_opt = datetime.strptime(last_opt[0].timestamp, '%Y-%m-%d %H:%M:%S')
 
-
-
-    # kadn = 0.0101439
-    # katn = 0.0002295
-    # ktmv = 0.004998
-    # kttn = 0.005253
-    # kqga = 0.058344
-    # kqua = 0.0058344
 
 if 'obj_bess' in locals(): 
     for object in obj_bess:
@@ -213,7 +216,7 @@ if 'obj_bess' in locals():
     f.write("\n")
     f.close()
 
-if 'obj1' in locals(): 
+if 'obj_o' in locals(): 
     tsp = []
     a1 = []
     a2 = []
@@ -226,8 +229,8 @@ if 'obj1' in locals():
     a9 = []
     a10 = []
     Nst = []
-    for object in obj1:
-        tsp.append([object.timestamp])  
+    for object in obj_o:
+        tsp.append(datetime.strftime(object.timestamp, FMT))  
         # a1.append([object.forecast])  
         a1.append([object.P_Power_schedule])  
         a2.append([object.Q_Power_schedule])
@@ -242,21 +245,70 @@ if 'obj1' in locals():
         Nst.append([object.FK_NumberOfSet_output])
 
     f= open("guru99.txt","w+")
-    f.write("Number of items \t%d\n\n" % (len(obj1)))
-    f.write("i\t\t a1\t\t\t a2\t\t\t a3\t\t\t a4\t\t \
-        a5\t\t\t a6\t\t\t a7\t\t\t a8\t\t\t a9\t\t\t a10\t\t\t Nst\n")
-    for i in range(len(obj1)):
+    f.write("Number of items \t%d\n\n" % (len(obj_o)))
+    f.write("i\t\t t.s\t\t\t\t a1\t\t\t a2\t\t\t a3\t\t\t a4\t\t \
+        Nst\n") #a5\t\t\t a6\t\t\t a7\t\t\t a8\t\t\t a9\t\t\t a10\t\t\t 
+    for i in range(len(obj_o)):
         f.write("%d\t\t" % (i))
+        f.write("%s\t\t" % (tsp[i]))
         f.write("%s\t\t" % (a1[i]))
         f.write("%s\t\t" % (a2[i]))
         f.write("%s\t\t" % (a3[i]))
         f.write("%s\t\t" % (a4[i]))
-        f.write("%s\t\t" % (a5[i]))
-        f.write("%s\t\t" % (a6[i]))
-        f.write("%s\t\t" % (a7[i]))
-        f.write("%s\t\t" % (a8[i]))
-        f.write("%s\t\t" % (a9[i]))
-        f.write("%s\t\t" % (a10[i]))
+        # f.write("%s\t\t" % (a5[i]))
+        # f.write("%s\t\t" % (a6[i]))
+        # f.write("%s\t\t" % (a7[i]))
+        # f.write("%s\t\t" % (a8[i]))
+        # f.write("%s\t\t" % (a9[i]))
+        # f.write("%s\t\t" % (a10[i]))
+        f.write("%s\t\t" % (Nst[i]))
+        f.write("\n")
+    f.close()
+
+if 'obj_i' in locals(): 
+    tsp = []
+    a1 = []
+    a2 = []
+    a3 = []
+    a4 = []
+    a5 = []
+    a6 = []
+    a7 = []
+    a8 = []
+    a9 = []
+    a10 = []
+    Nst = []
+    for object in obj_i:
+        tsp.append(datetime.strftime(object.timestamp, FMT))  
+        a1.append([object.P_forecast_price])  
+        a2.append([object.Q_forecast_price])
+        a3.append([object.Max_limit])
+        a4.append([object.Min_limit])
+        # a5.append([object.])
+        # a6.append([object.])
+        # a7.append([object.])
+        # a8.append([object.])
+        # a9.append([object.])
+        # a10.append([object.])
+        Nst.append([object.FK_NumberOfSet_input])
+
+    f= open("guru98.txt","w+")
+    f.write("Number of items \t%d\n\n" % (len(obj_i)))
+    f.write("i\t\t t.s\t\t\t\t a1\t\t\t a2\t\t\t a3\t\t\t a4\t\t \
+              Nst\n") #        a5\t\t\t a6\t\t\t a7\t\t\t a8\t\t\t a9\t\t\t a10\t\t\t \
+    for i in range(len(obj_i)):
+        f.write("%d\t\t" % (i))
+        f.write("%s\t\t" % (tsp[i]))
+        f.write("%s\t\t" % (a1[i]))
+        f.write("%s\t\t" % (a2[i]))
+        f.write("%s\t\t" % (a3[i]))
+        f.write("%s\t\t" % (a4[i]))
+        # f.write("%s\t\t" % (a5[i]))
+        # f.write("%s\t\t" % (a6[i]))
+        # f.write("%s\t\t" % (a7[i]))
+        # f.write("%s\t\t" % (a8[i]))
+        # f.write("%s\t\t" % (a9[i]))
+        # f.write("%s\t\t" % (a10[i]))
         f.write("%s\t\t" % (Nst[i]))
         f.write("\n")
     f.close()
