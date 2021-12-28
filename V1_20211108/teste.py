@@ -153,7 +153,7 @@ DictOutput_ac = {
     "Final_Price_Q_Reserve_down" : [0]*72
     }
 
-# obj2 = test_w1_output(DictOutput,10)
+# obj2 = test_w1_output(DictOutput,1)
 # obj2 = test_w1_input(DictERMS,1)
 # obj2 = test_w1_outputac(DictOutput_ac,2)
 # obj2 = test_w1_pv(DictPV,1)
@@ -173,8 +173,8 @@ newopt={
 
 # obj_bess = test1()
 # obj1 = test1()
-obj_o = test_r1_output(10)
-obj_i = test_r1_input(1)
+obj_o = test_r1_output(1)
+# obj_i = test_r1_input(1)
 
 
 # dict = Dict()
@@ -228,6 +228,7 @@ if 'obj_o' in locals():
     a8 = []
     a9 = []
     a10 = []
+    a11 = []
     Nst = []
     for object in obj_o:
         tsp.append(datetime.strftime(object.timestamp, FMT))  
@@ -242,6 +243,7 @@ if 'obj_o' in locals():
         a8.append([object.P_Bid_price_down])
         a9.append([object.Q_Bid_price_up])
         a10.append([object.Q_Bid_price_down])
+        a11.append([object.Initial_Energy_schedule])
         Nst.append([object.FK_NumberOfSet_output])
 
     f= open("guru99.txt","w+")
@@ -261,6 +263,7 @@ if 'obj_o' in locals():
         # f.write("%s\t\t" % (a8[i]))
         # f.write("%s\t\t" % (a9[i]))
         # f.write("%s\t\t" % (a10[i]))
+        f.write("%s\t\t" % (a11[i]))
         f.write("%s\t\t" % (Nst[i]))
         f.write("\n")
     f.close()
